@@ -19,6 +19,7 @@ leptos_router = { version = "0.5", features = ["nightly"] }
 wasm-bindgen = "=0.2.88"
 diesel = { version = "2.1.3", features = ["postgres"] }
 dotenv = "0.15.0"
+pbkdf2 = { version = "0.12.2", features = ["simple"] }
 
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
