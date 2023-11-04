@@ -19,7 +19,7 @@ leptos_router = { version = "0.5", features = ["nightly"] }
 wasm-bindgen = "=0.2.88"
 dotenv = "0.15.0"
 pbkdf2 = { version = "0.12.2", features = ["simple"] }
-
+sqlx = { version = "0.7.2", features = ["macros", "postgres", "runtime-tokio-rustls"], optional = true }
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -30,6 +30,7 @@ ssr = [
   "leptos/ssr",
   "leptos_meta/ssr",
   "leptos_router/ssr",
+  "sqlx",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
