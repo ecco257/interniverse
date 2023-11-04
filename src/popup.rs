@@ -13,10 +13,12 @@ pub fn Popup(children: Children) -> impl IntoView {
 
     view! {
         <dialog _ref=dialog_ref open>
-            <button autofocus on:click=on_close>Close</button>
+            <button autofocus on:click=on_close class="dialog-close"></button>
+            <div class="dialog-container">
             {
                 children().nodes.into_iter().collect::<Vec<_>>()
             }
+            </div>
         </dialog>
     }
 }
