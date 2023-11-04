@@ -2,6 +2,7 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use crate::comment::Comment;
+use crate::popup::PopupPage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -21,6 +22,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="/popup-test" view=PopupPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
