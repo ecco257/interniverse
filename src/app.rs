@@ -1,7 +1,6 @@
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use crate::comment::Comment;
 use crate::popup::PopupPage;
 
 #[component]
