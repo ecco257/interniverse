@@ -30,14 +30,25 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(0);
-    let on_click = move |_| set_count.update(|count| *count += 1);
+
+	use crate::header::Header;
+	use crate::search_bar::SearchBar;
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
+		<div class="home-page">
+			<Header/>
+			<SearchBar/>
+		</div>
     }
+}
+
+/// Renders the new post page of your application.
+/// This is where users can create new posts.
+#[component]
+fn NewPost() -> impl IntoView {
+	view! {
+		<h1>"New Post"</h1>
+	}
 }
 
 /// 404 - Not Found

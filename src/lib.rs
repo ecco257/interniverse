@@ -1,5 +1,7 @@
 pub mod app;
 use cfg_if::cfg_if;
+pub mod header;
+pub mod search_bar;
 
 cfg_if! {
 if #[cfg(feature = "hydrate")] {
