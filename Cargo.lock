@@ -1341,6 +1341,7 @@ dependencies = [
  "leptos_meta",
  "leptos_router",
  "pbkdf2",
+ "serde",
  "sqlx",
  "wasm-bindgen",
 ]
