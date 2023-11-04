@@ -1,4 +1,6 @@
 pub mod app;
+pub mod popup;
+
 pub mod comment;
 use cfg_if::cfg_if;
 
