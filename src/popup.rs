@@ -1,7 +1,11 @@
 use leptos::*;
 
 #[component]
-pub fn Popup(children: ChildrenFn) -> impl IntoView {
+pub fn Popup<'a>(
+    header: &'a MaybeSignal<String>,
+    footer: &'a MaybeSignal<String>,
+    children: ChildrenFn
+) -> impl IntoView {
     let close_icon = "×";
 
     let (open, set_open) = create_signal(true);
@@ -14,17 +18,15 @@ pub fn Popup(children: ChildrenFn) -> impl IntoView {
             <div class="popup-content">
                 <div class="popup-header">
                     <span on:click=on_close class="popup-close">{close_icon}</span>
+                    <h2>{header.get()}</h2>
+                </div>
+                <div class="popup-body">
                     {
                         children().nodes
                     }
-                    <h2>Modal Header</h2>
-                </div>
-                <div class="popup-body">
-                    <p>Some text in the Modal Body</p>
-                    <p>Some other text...</p>
                 </div>
                 <div class="popup-footer">
-                    <h3>Modal Footer</h3>
+                    <h3>{footer.get()}</h3>
                 </div>
             </div>
         </div>
@@ -34,7 +36,7 @@ pub fn Popup(children: ChildrenFn) -> impl IntoView {
 #[component]
 pub fn PopupPage() -> impl IntoView {
     view! {
-        <Popup>
+        <Popup header=&MaybeSignal::Static(String::from("TEST HEADER")) footer=&MaybeSignal::Static(String::from("TEST FOOTER"))>
             <p>Popup Test</p>
         </Popup>
     }
