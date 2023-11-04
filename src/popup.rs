@@ -1,24 +1,25 @@
 use leptos::*;
-use leptos::html::Dialog;
+use leptos::html::Div;
 
 #[component]
-pub fn Popup(children: Children) -> impl IntoView {
-    let dialog_ref = create_node_ref::<Dialog>();
+pub fn Popup(children: ChildrenFn) -> impl IntoView {
+    let close_icon = "×";
 
+    let (open, set_open) = create_signal(true);
     let on_close = move |_| {
-        let dialog = dialog_ref.get().expect("dialog_ref should be loaded");
-
-        dialog.set_open(false);
+        set_open.set(false);
     };
 
     view! {
-        <dialog _ref=dialog_ref open>
-            <button autofocus on:click=on_close class="dialog-close"></button>
-            <div class="dialog-container">
-            {
-                children().nodes.into_iter().collect::<Vec<_>>()
-            }
+        <Show when=move || open.get()>
+            <div class="popup">
+                <div class="popup-content">
+                    <span on:click=on_close class="popup-close">{close_icon}</span>
+                    {
+                        children().nodes
+                    }
+                </div>
             </div>
-        </dialog>
+        </Show>
     }
 }
