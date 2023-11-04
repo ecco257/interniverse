@@ -21,6 +21,7 @@ dotenv = "0.15.0"
 pbkdf2 = { version = "0.12.2", features = ["simple"] }
 sqlx = { version = "0.7.2", features = ["macros", "postgres", "runtime-tokio-rustls"], optional = true }
 serde = { version = "1.0.190", features = ["derive"] }
+rand = "0.8.5"
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
