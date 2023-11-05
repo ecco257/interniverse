@@ -1,6 +1,7 @@
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
+use wasm_bindgen::JsCast;
 use crate::listing::ListingPage;
 use crate::popup::PopupPage;
 use crate::header::Header;
@@ -8,6 +9,7 @@ use crate::search_bar::SearchBar;
 use crate::listing_prev::ListingPrev;
 use crate::login::LoginPage;
 use crate::registration::RegistrationPage;
+use crate::session::SessionPage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -31,6 +33,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/login-test" view=LoginPage/>
                     <Route path="/registration-test" view=RegistrationPage/>
                     <Route path="/listing-test" view=ListingPage/>
+                    <Route path="/session-test" view=SessionPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
