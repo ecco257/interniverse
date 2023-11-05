@@ -1,6 +1,7 @@
 pub mod app;
 pub mod db;
 pub mod popup;
+pub mod login;
 
 pub mod comment;
 use cfg_if::cfg_if;
