@@ -22,6 +22,7 @@ pbkdf2 = { version = "0.12.2", features = ["simple"] }
 sqlx = { version = "0.7.2", features = ["macros", "postgres", "runtime-tokio-rustls"], optional = true }
 serde = { version = "1.0.190", features = ["derive"] }
 rand = "0.8.5"
+tokio = { version = "1.33.0", features = ["full"], optional = true }
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
@@ -33,6 +34,7 @@ ssr = [
   "leptos_meta/ssr",
   "leptos_router/ssr",
   "sqlx",
+  "tokio",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
