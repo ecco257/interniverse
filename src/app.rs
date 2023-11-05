@@ -4,6 +4,8 @@ use leptos_router::*;
 use leptos::leptos_dom::Text;
 use wasm_bindgen::JsCast;
 use crate::listing::ListingPage;
+use crate::listing::Listing;
+use crate::listing::get_all_listings;
 use crate::popup::PopupPage;
 use crate::header::Header;
 use crate::search_bar::SearchBar;
@@ -38,6 +40,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/listing-test" view=ListingPage/>
                     <Route path="/session-test" view=SessionPage/>
                     <Route path="/profile-test" view=ProfilePage/>
+					<Route path="/listing/*any" view=ListingPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -45,34 +48,16 @@ pub fn App() -> impl IntoView {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct Listing {
-    pub company_name: String,
-    pub position: String,
-    pub num_comments: String,
-}
-
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
 
-	let (all_listings, set_all_listings) = create_signal(vec![
-        Listing {
-            company_name: "Company 1".to_string(),
-            position: "Position 1".to_string(),
-            num_comments: "1".to_string(),
-        },
-        Listing {
-            company_name: "Company 2".to_string(),
-            position: "Position 2".to_string(),
-            num_comments: "2".to_string(),
-        },
-        Listing {
-            company_name: "Company 3".to_string(),
-            position: "Position 3".to_string(),
-            num_comments: "3".to_string(),
-        },
-    ]);
+	let all_listings = create_resource(
+		|| (),
+		|_| async move { get_all_listings().await },
+	);
+
+	console_log(&format!("all_listings: {:?}", all_listings.get()));
 
 	let (search_query, set_search_query) = create_signal(String::new());
 
@@ -85,26 +70,35 @@ fn HomePage() -> impl IntoView {
                 search_query=search_query 
                 set_search_query=set_search_query
             />
-            <div>{filtered_listings}</div>
+			<Suspense fallback=move || view! { <div>"Loading..."</div> }>
+            	<div>{filtered_listings}</div>
+			</Suspense>
             {
                 create_effect(move |_| {
                     let filter_text = search_query.get().to_lowercase();
-                        let all_listings = all_listings.get();
-						let filtered = all_listings.iter()
-							.filter(|listing| listing.company_name.to_lowercase().contains(&filter_text) ||
-                                listing.position.to_lowercase().contains(&filter_text))
-							.collect::<Vec<&Listing>>();						
-						let content = filtered.iter().map(|listing| {
-							view! {
-								<ListingPrev
-									company_name=listing.company_name.clone()
-									position=listing.position.clone()
-									num_comments=listing.num_comments.clone()
-								/>
-							}
-                        }).collect_view();
+					let all_listings = match all_listings.get() {
+						Some(Ok(listings)) => listings, 
+						Some(Err(_)) => return, 
+						None => return,
+					};
+					if all_listings.is_empty() {
+						return;
+					}
+					let filtered = all_listings.iter().filter(|listing| {
+						listing.company.to_lowercase().contains(&filter_text) || listing.position.to_lowercase().contains(&filter_text)
+					}).collect::<Vec<&Listing>>();		
+					let content = filtered.iter().map(|listing| {
+						view! {
+							<ListingPrev
+								company_name=listing.company.clone()
+								position=listing.position.clone()
+								description=listing.description.clone()
+								id=listing.id
+							/>
+						}
+					}).collect_view();
 
-                        set_filtered_listings(content);
+					set_filtered_listings(content);
                 });
             }
         </div>
