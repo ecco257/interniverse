@@ -111,8 +111,8 @@ use leptos::*;
 use crate::popup::Popup;
 use crate::session::{SessionModel, set_session};
 
-pub fn Login() -> impl IntoView {
-    let open = create_rw_signal(true);
+#[component]
+pub fn Login(open: RwSignal<bool>, reload_profile: RwSignal<bool>, register_open: RwSignal<bool>) -> impl IntoView {
     let (username, set_username) = create_signal("".to_string());
     let (password, set_password) = create_signal("".to_string());
 
@@ -132,7 +132,10 @@ pub fn Login() -> impl IntoView {
 					match response {
 						Ok(_) => {
 							console_log("Set session cookie");
-							set_status("Logged in".to_string());
+							set_status("".to_string());
+
+							reload_profile.set(true);
+							open.set(false);
 						},
 						Err(e) => {
 							console_log(&("Error:".to_string() + e.to_string().as_str()));
@@ -150,6 +153,11 @@ pub fn Login() -> impl IntoView {
 				}
 			}
 		})
+	};
+
+	let on_register = move |_| {
+		open.set(false);
+		register_open.set(true);
 	};
 
     view! {
@@ -180,14 +188,8 @@ pub fn Login() -> impl IntoView {
                     prop:value=password
                 />
                 <button class="login-button" on:click=on_submit>Login</button>
+				<button class="login-button" on:click=on_register>"Don't have an account? Register!"</button>
             </div>
         </Popup>
-    }
-}
-
-#[component]
-pub fn LoginPage() -> impl IntoView {
-    view! {
-        <Login/>
     }
 }

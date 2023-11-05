@@ -24,19 +24,3 @@ pub fn Popup(
         </div>
     }
 }
-
-#[component]
-pub fn PopupPage() -> impl IntoView {
-    let open = create_rw_signal(true);
-
-    let on_open = move |_| {
-        open.set(true);
-    };
-
-    view! {
-        <button on:click=on_open>POPUP!</button>
-        <Popup width=MaybeSignal::Static(80) open=open>
-            <p>Popup Test</p>
-        </Popup>
-    }
-}

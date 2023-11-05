@@ -4,8 +4,8 @@ use crate::login::*;
 use leptos::{*, ev::SubmitEvent, leptos_dom::logging::console_log};
 use crate::session::set_session;
 
-pub fn Registration() -> impl IntoView {
-    let open = create_rw_signal(true);
+#[component]
+pub fn Registration(open: RwSignal<bool>, reload_profile: RwSignal<bool>, login_open: RwSignal<bool>) -> impl IntoView {
     let (username, set_username) = create_signal("".to_string());
     let (password, set_password) = create_signal("".to_string());
     let (school, set_school) = create_signal("".to_string());
@@ -25,7 +25,10 @@ pub fn Registration() -> impl IntoView {
                 Ok(session) => {
                     set_session(session).await.expect("Failed to set session");
                     console_log("Registered");
-                    set_status("Registered".to_string());
+                    set_status("".to_string());
+
+                    reload_profile.set(true);
+                    open.set(false);
                 },
                 Err(e) => {
                     console_log(&("Error: ".to_string() + e.to_string().as_str()));
@@ -33,6 +36,11 @@ pub fn Registration() -> impl IntoView {
                 }
             }
         })
+    };
+
+    let on_login = move |_| {
+        open.set(false);
+        login_open.set(true);
     };
 
     view! {
@@ -96,14 +104,8 @@ pub fn Registration() -> impl IntoView {
                     prop:value=linkedin
                 />
                 <button class="login-button" on:click=on_submit>Register</button>
+                <button class="login-button" on:click=on_login>Already have an account? Login!</button>
             </div>
         </Popup>
-    }
-}
-
-#[component]
-pub fn RegistrationPage() -> impl IntoView {
-    view! {
-        <Registration/>
     }
 }
