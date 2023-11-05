@@ -2,6 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 use crate::popup::PopupPage;
+use crate::header::Header;
+use crate::search_bar::SearchBar;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -32,9 +34,6 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-
-	use crate::header::Header;
-	use crate::search_bar::SearchBar;
 
     view! {
 		<div class="home-page">
