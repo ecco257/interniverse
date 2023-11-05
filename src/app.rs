@@ -59,6 +59,8 @@ fn HomePage() -> impl IntoView {
 
     let login_open = create_rw_signal(false);
 
+    let register_open = create_rw_signal(false);
+
     let reload_profile = create_rw_signal(false);
 
     view! {
@@ -101,7 +103,8 @@ fn HomePage() -> impl IntoView {
             }
         </div>
         <Profile open=profile_open reload_profile=reload_profile/>
-        <Login open=login_open reload_profile=reload_profile/>
+        <Login open=login_open reload_profile=reload_profile register_open=register_open/>
+        <Registration open=register_open reload_profile=reload_profile login_open=login_open/>
     }
 }
 

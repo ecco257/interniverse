@@ -112,7 +112,7 @@ use crate::popup::Popup;
 use crate::session::{SessionModel, set_session};
 
 #[component]
-pub fn Login(open: RwSignal<bool>, reload_profile: RwSignal<bool>) -> impl IntoView {
+pub fn Login(open: RwSignal<bool>, reload_profile: RwSignal<bool>, register_open: RwSignal<bool>) -> impl IntoView {
     let (username, set_username) = create_signal("".to_string());
     let (password, set_password) = create_signal("".to_string());
 
@@ -132,7 +132,7 @@ pub fn Login(open: RwSignal<bool>, reload_profile: RwSignal<bool>) -> impl IntoV
 					match response {
 						Ok(_) => {
 							console_log("Set session cookie");
-							set_status("Logged in".to_string());
+							set_status("".to_string());
 
 							reload_profile.set(true);
 							open.set(false);
@@ -153,6 +153,11 @@ pub fn Login(open: RwSignal<bool>, reload_profile: RwSignal<bool>) -> impl IntoV
 				}
 			}
 		})
+	};
+
+	let on_register = move |_| {
+		open.set(false);
+		register_open.set(true);
 	};
 
     view! {
@@ -183,6 +188,7 @@ pub fn Login(open: RwSignal<bool>, reload_profile: RwSignal<bool>) -> impl IntoV
                     prop:value=password
                 />
                 <button class="login-button" on:click=on_submit>Login</button>
+				<button class="login-button" on:click=on_register>"Don't have an account? Register!"</button>
             </div>
         </Popup>
     }
