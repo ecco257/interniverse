@@ -1,4 +1,6 @@
 use leptos::*;
+use cfg_if::cfg_if;
+use serde::{Deserialize, Serialize};
 
 /*
 HOW TO WRITE A COMMENT:
@@ -11,25 +13,31 @@ HOW TO WRITE A COMMENT:
 )/>
 */
 
+cfg_if! {
+	if #[cfg(feature = "ssr")] {
+		use crate::db::db;
+    }
+}
+
 // Struct for comment data
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Comment {
     author: String,
     content: String,
-    timestamp: String,
+    timestamp: i64,
     rating: f64,
-    id: u64,
+    listing_id: i64,
 }
 
 // Implementation of getters for comment data
 impl Comment {
-    pub fn new(author: String, content: String, timestamp: String, rating:f64, id:u64) -> Self {
+    pub fn new(author: String, content: String, timestamp: i64, rating:f64, listing_id:i64) -> Self {
         Comment {
             author,
             content,
             timestamp,
             rating,
-            id,
+            listing_id,
         }
     }
 
@@ -41,17 +49,34 @@ impl Comment {
         &self.content
     }
 
-    pub fn get_timestamp(&self) -> &String {
-        &self.timestamp
+    pub fn get_timestamp(&self) -> i64 {
+        self.timestamp
     }
 
     pub fn get_rating(&self) -> f64 {
         self.rating
     }
 
-    pub fn get_id(&self) -> u64 {
-        self.id
+    pub fn get_listing_id(&self) -> i64 {
+        self.listing_id
     }
+}
+
+#[server(GetComments, "/comments")]
+pub async fn get_comments(listing_id: i64) -> Result<Vec<Comment>, ServerFnError> {
+    let mut conn = db().await?;
+    let comments = sqlx::query_as!(Comment, "SELECT * FROM comments WHERE listing_id = $1", listing_id)
+        .fetch_all(&mut conn).await?;
+    Ok(comments)
+}
+
+#[server(AddComment, "/add_comment")]
+pub async fn add_comment(author: String, content: String, rating: f64, listing_id: i64) -> Result<(), ServerFnError> {
+    let mut conn = db().await?;
+    let rows = sqlx::query!("INSERT INTO comments (author, content, timestamp, rating, listing_id) VALUES ($1, $2, $3, $4, $5)",
+        author, content, chrono::Utc::now().timestamp_millis(), rating, listing_id)
+        .execute(&mut conn).await?;
+    Ok(())
 }
 
 // Renders a navbar structure

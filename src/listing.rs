@@ -1,33 +1,38 @@
-use crate::comment::Comment;
+use cfg_if::cfg_if;
+use crate::comment::{Comment, get_comments, self};
+use serde::{Deserialize, Serialize};
+use crate::login::*;
 use chrono::prelude::*;
 use leptos::*;
 use leptos::{ev::SubmitEvent, *};
 
+cfg_if! {
+	if #[cfg(feature = "ssr")] {
+		use crate::db::db;
+    }
+}
+
 // Listing contains information for a company's internship listing along with a list of comments
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Listing {
     company: String,
     position: String,
     description: String,
     url: String,
-    id: u64,
+    id: i64,
+    school: String,
 }
 
 // Implementation of getters for comment data
 impl Listing {
-    pub fn new(
-        company: String,
-        position: String,
-        description: String,
-        url: String,
-        id: u64,
-    ) -> Self {
+    pub fn new(company: String, position: String, description: String, url: String, id: i64, school: String) -> Self {
         Listing {
             company,
             position,
             description,
             url,
             id,
+            school,
         }
     }
 
@@ -47,9 +52,38 @@ impl Listing {
         &self.url
     }
 
-    pub fn get_id(&self) -> u64 {
+    pub fn get_id(&self) -> i64 {
         self.id
     }
+
+    pub fn get_school(&self) -> &String {
+        &self.school
+    }
+}
+
+#[server(GetListings, "/listings")]
+pub async fn get_listings(school: String) -> Result<Result<Vec<Listing>, String>, ServerFnError> {
+    let mut conn = db().await?;
+    let listings = sqlx::query_as!(Listing, "SELECT * FROM listings WHERE school = $1", school)
+        .fetch_all(&mut conn).await?;
+    Ok(Ok(listings))
+}
+
+#[server(GetAllListings, "/all-listings")]
+pub async fn get_all_listings() -> Result<Vec<Listing>, ServerFnError> {
+    let mut conn = db().await?;
+    let listings = sqlx::query_as!(Listing, "SELECT * FROM listings")
+        .fetch_all(&mut conn).await?;
+    Ok(listings)
+}
+
+#[server(AddListing, "/add-listing")]
+pub async fn add_listing(listing: Listing) -> Result<Result<(), String>, ServerFnError> {
+    let mut conn = db().await?;
+    let rows = sqlx::query!("INSERT INTO listings (company, position, description, url, id, school) VALUES ($1, $2, $3, $4, $5, $6)",
+        listing.company, listing.position, listing.description, listing.url, listing.id, listing.school)
+        .execute(&mut conn).await?;
+    Ok(Ok(()))
 }
 
 // Renders a navbar structure
@@ -389,6 +423,7 @@ pub fn ListingPage() -> impl IntoView {
         String::from("This is the description for google."),
         String::from("https://www.google.com/"),
         0,
+        String::from("RPI"),
     ));
 
     view! {
