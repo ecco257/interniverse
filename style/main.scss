@@ -5,9 +5,260 @@
 @import 'search_bar.scss';
 @import 'comment.scss';
 @import 'post_prev.scss';
+@import 'login.scss';
 
 body {
 	font-family: sans-serif;
 	text-align: center;
 	margin: 0;
 }
+
+/* Define the main colors for easy maintenance */
+$primary-color: #3d7e9c;
+$header-background-color: $primary-color;
+$header-text-color: #fff;
+$toggle-inactive-background: #ccc;
+$toggle-active-background: #5cb85c;
+$button-hover-color: darken(#fff, 25%);
+
+.home-page {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.main-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background-color: $header-background-color;
+	color: $header-text-color;
+	padding: 0.5rem 1rem;
+
+	.header-left {
+		h1 {
+		margin: 0;
+		font-size: 1.5rem;
+		}
+	}
+
+	.header-right {
+		display: flex;
+		align-items: center;
+		gap: 1rem; // Adjust the space between elements
+
+		.switch {
+		position: relative;
+		display: inline-block;
+		width: 60px;
+		height: 34px;
+		input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: $toggle-inactive-background;
+			transition: .4s;
+			border-radius: 34px;
+
+			&:before {
+			position: absolute;
+			content: "";
+			height: 26px;
+			width: 26px;
+			left: 4px;
+			bottom: 4px;
+			background-color: white;
+			transition: .4s;
+			border-radius: 50%;
+			}
+		}
+		input:checked + .slider {
+			background-color: $toggle-active-background;
+		}
+		input:checked + .slider:before {
+			transform: translateX(26px);
+		}
+		}
+
+		.school-name {
+		font-weight: bold;
+		}
+
+		.new-post-btn {
+			cursor: pointer;
+
+			svg {
+				font-size: 1.25rem;
+				stroke: #fff;
+			}
+
+			&:hover {
+				svg{
+					stroke: $button-hover-color;
+				}
+			}
+		}
+
+		.profile-btn {
+			background: none;
+			border: none;
+			cursor: pointer;
+
+			svg {
+				font-size: 1.25rem;
+				stroke: #fff;
+			}
+
+			&:hover {
+				svg{
+					stroke: $button-hover-color;
+				}
+			}
+		}
+
+		.profile-menu {
+		position: relative;
+
+		.profile-dropdown {
+			display: none;
+			position: absolute;
+			right: 0;
+			background-color: $header-background-color;
+			box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+			z-index: 1;
+
+			a {
+			color: $header-text-color;
+			padding: 12px 16px;
+			text-decoration: none;
+			display: block;
+
+			&:hover {
+				background-color: #ddd;
+				color: #333;
+			}
+			}
+		}
+
+		.profile-btn:focus ~ .profile-dropdown,
+		.profile-btn:active ~ .profile-dropdown,
+		.profile-dropdown:hover {
+			display: block; // This shows the dropdown when it's focused or hovered
+		}
+		}
+	}
+}
+
+.search-bar-wrapper {
+	position: relative;
+	width: 50%;
+	max-width: 600px; // Set a max width for the search bar
+	margin: 2rem auto; // Center the search bar with margin
+
+	.search-bar {
+		width: 100%;
+		padding: 1rem;
+		font-size: 1rem;
+		border: 1px solid #ddd;
+		border-radius: 10px;
+		outline: none;
+		transition: border-color 0.2s ease-in-out;
+
+		&::placeholder {
+			color: #ccc;
+		}
+		&:focus {
+			border-color: #aaa;
+		}
+	}
+}
+
+// Responsive adjustments (example for mobile devices)
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .header-right {
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+/* Style the outer comment container */
+.comment {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+	width:75%;
+	margin:auto;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the comment header section */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Style the comment author's profile */
+.comment-profile {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #3498db; /* Blue text color for the name */
+    text-decoration: underline; /* Add an underline to the name */
+}
+
+/* Style the comment timestamp */
+.comment-timestamp {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Style the comment content */
+.comment-content {
+    padding: 10px;
+    margin-top: 10px;
+    color: #333;
+}
+
+/* Style the star rating container */
+.star-rating {
+    display: flex;
+    align-items: center;
+}
+
+/* Style the hidden progress bar */
+.hidden-progress {
+    visibility: hidden;
+    width: 0;
+}
+
+/* Style the star icons */
+.stars {
+    display: flex;
+    color: #f2c418; /* Default star color */
+}
+
+.star {
+    height:25px;
+	width:25px;
+    margin-right: 5px;
+} 
