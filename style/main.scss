@@ -187,3 +187,71 @@ $button-hover-color: darken(#fff, 25%);
     }
   }
 }
+
+/* Style the outer comment container */
+.comment {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px;
+	width:75%;
+	margin:auto;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the comment header section */
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e0e0e0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Style the comment author's profile */
+.comment-profile {
+    font-weight: bold;
+    margin-right: 10px;
+    color: #3498db; /* Blue text color for the name */
+    text-decoration: underline; /* Add an underline to the name */
+}
+
+/* Style the comment timestamp */
+.comment-timestamp {
+    font-size: 12px;
+    color: #666;
+}
+
+/* Style the comment content */
+.comment-content {
+    padding: 10px;
+    margin-top: 10px;
+    color: #333;
+}
+
+/* Style the star rating container */
+.star-rating {
+    display: flex;
+    align-items: center;
+}
+
+/* Style the hidden progress bar */
+.hidden-progress {
+    visibility: hidden;
+    width: 0;
+}
+
+/* Style the star icons */
+.stars {
+    display: flex;
+    color: #f2c418; /* Default star color */
+}
+
+.star {
+    height:25px;
+	width:25px;
+    margin-right: 5px;
+} 
