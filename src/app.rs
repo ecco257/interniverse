@@ -4,6 +4,7 @@ use leptos_router::*;
 use crate::popup::PopupPage;
 use crate::header::Header;
 use crate::search_bar::SearchBar;
+use crate::listing_prev::ListingPrev;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -39,6 +40,11 @@ fn HomePage() -> impl IntoView {
 		<div class="home-page">
 			<Header/>
 			<SearchBar/>
+			<div class="listings">
+				<ListingPrev company_name="Company 1".to_string() position="Position 1".to_string() num_comments="1".to_string()/>
+				<ListingPrev company_name="Company 2".to_string() position="Position 2".to_string() num_comments="2".to_string()/>
+				<ListingPrev company_name="Company 3".to_string() position="Position 3".to_string() num_comments="3".to_string()/>
+			</div>
 		</div>
     }
 }
