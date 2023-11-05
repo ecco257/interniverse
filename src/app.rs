@@ -85,15 +85,15 @@ fn HomePage() -> impl IntoView {
 						return;
 					}
 					let filtered = all_listings.iter().filter(|listing| {
-						listing.company.to_lowercase().contains(&filter_text) || listing.position.to_lowercase().contains(&filter_text)
+						listing.get_company().to_lowercase().contains(&filter_text) || listing.get_position().to_lowercase().contains(&filter_text)
 					}).collect::<Vec<&Listing>>();		
 					let content = filtered.iter().map(|listing| {
 						view! {
 							<ListingPrev
-								company_name=listing.company.clone()
-								position=listing.position.clone()
-								description=listing.description.clone()
-								id=listing.id
+								company_name=listing.get_company().clone()
+								position=listing.get_position().clone()
+								description=listing.get_description().clone()
+								id=listing.get_id()
 							/>
 						}
 					}).collect_view();
