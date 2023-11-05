@@ -3,6 +3,11 @@ use leptos_meta::*;
 use leptos_router::*;
 use crate::comment::Comment;
 use crate::listing::Listing;
+use crate::popup::PopupPage;
+use crate::header::Header;
+use crate::search_bar::SearchBar;
+use crate::listing_prev::ListingPrev;
+use crate::login::LoginPage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -22,6 +27,8 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="/popup-test" view=PopupPage/>
+                    <Route path="/login-test" view=LoginPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -32,24 +39,26 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(0);
-    // THIS IS A SAMPLE LISTING, CAN DELETE LATER!!
-    let (test_listing, set_listing) = create_signal(Listing::new(
-        String::from("Google"),
-        String::from("This is a google internship."),
-        String::from("LINK")
-    ));
-
-    let on_click = move |_| set_count.update(|count| *count += 1);
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
-        
-        // THIS IS A SAMPLE LISTING DEFINITION
-        <Listing listing_data=test_listing></Listing>
+		<div class="home-page">
+			<Header/>
+			<SearchBar/>
+			<div class="listings">
+                // THIS IS A SAMPLE LISTING DEFINITION
+                <Listing listing_data=test_listing></Listing>
+			</div>
+		</div>
     }
+}
+
+/// Renders the new post page of your application.
+/// This is where users can create new posts.
+#[component]
+fn NewPost() -> impl IntoView {
+	view! {
+		<h1>"New Post"</h1>
+	}
 }
 
 /// 404 - Not Found

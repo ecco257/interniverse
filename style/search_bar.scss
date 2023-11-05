@@ -1,0 +1,23 @@
+.search-bar-wrapper {
+	position: relative;
+	width: 50%;
+	max-width: 600px; // Set a max width for the search bar
+	margin: 2rem auto; // Center the search bar with margin
+
+	.search-bar {
+		width: 100%;
+		padding: 1rem;
+		font-size: 1rem;
+		border: 1px solid #ddd;
+		border-radius: 10px;
+		outline: none;
+		transition: border-color 0.2s ease-in-out;
+
+		&::placeholder {
+			color: #ccc;
+		}
+		&:focus {
+			border-color: #aaa;
+		}
+	}
+}
