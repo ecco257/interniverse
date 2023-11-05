@@ -12,6 +12,7 @@ use crate::login::LoginPage;
 use leptos::leptos_dom::logging::console_log;
 use crate::registration::RegistrationPage;
 use crate::session::SessionPage;
+use crate::profile::ProfilePage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -36,6 +37,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/registration-test" view=RegistrationPage/>
                     <Route path="/listing-test" view=ListingPage/>
                     <Route path="/session-test" view=SessionPage/>
+                    <Route path="/profile-test" view=ProfilePage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
