@@ -14,6 +14,8 @@ pub struct ProfileData {
 
 #[server(GetProfile)]
 pub async fn get_profile() -> Result<Option<ProfileData>, ServerFnError> {
+    use crate::login::validate_session;
+
     let session = get_session().await?;
 
     if session.is_none() {
@@ -21,6 +23,12 @@ pub async fn get_profile() -> Result<Option<ProfileData>, ServerFnError> {
     }
 
     let session = session.unwrap();
+
+    let validated = validate_session(session.user_id, session.token).await;
+
+    if validated.is_err() || !validated.unwrap() {
+        return Ok(None)
+    }
 
     let mut conn = db().await?;
 
