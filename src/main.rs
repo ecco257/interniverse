@@ -27,12 +27,6 @@ async fn main() -> std::io::Result<()> {
             .wrap(SessionMiddleware::builder(
                 CookieSessionStore::default(), Key::from(&[0; 64])
             )
-                .cookie_name(String::from("interniverse-cookie"))
-                .cookie_secure(true)
-                .session_lifecycle(BrowserSession::default())
-                .cookie_same_site(SameSite::Strict)
-                .cookie_content_security(CookieContentSecurity::Private)
-                .cookie_http_only(true)
                 .build())
             .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
             // serve JS/WASM/CSS from `pkg`
