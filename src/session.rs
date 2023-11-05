@@ -1,28 +1,21 @@
 use leptos::*;
 
 #[derive(serde::Deserialize, serde::Serialize, Debug, Clone)]
-struct SessionModel {
-    token: String
+pub struct SessionModel {
+    pub user_id: i32,
+    pub token: String
 }
 
 #[server(GetSession)]
-pub async fn get_session() -> Result<String, ServerFnError> {
+pub async fn get_session() -> Result<Option<SessionModel>, ServerFnError> {
     use leptos_actix::extract;
     use actix_session::Session;
 
-    extract(
+    Ok(extract(
         |session: Session| async move {
-            match session.get::<String>("message") {
-                Ok(message_option) => {
-                    match message_option {
-                        Some(message) => message,
-                        None => "Not Found".to_string(),
-                    }
-                },
-                Err(_) => "Error".to_string(),
-            }
+            session.get::<SessionModel>("session")
         }
-    ).await
+    ).await??)
 }
 
 #[server(SetSession)]
@@ -33,7 +26,7 @@ pub async fn set_session(model: SessionModel) -> Result<(), ServerFnError> {
 
     Ok(extract(
         |session: Session| async move {
-            session.insert("message", model.token.clone())
+            session.insert("session", model.clone())
         }
     ).await??)
 }
@@ -48,7 +41,11 @@ pub fn SessionPage() -> impl IntoView {
 
             let s = get_session().await.unwrap();
 
-            set_current(s);
+            if let Some(model) = s {
+                set_current(model.token);
+            } else {
+                set_current("No token".to_string()  )
+            }
         })
     };
 
@@ -56,6 +53,7 @@ pub fn SessionPage() -> impl IntoView {
         spawn_local(async move {
             let model = SessionModel {
                 token: "TEST THING".to_string(),
+                user_id: 2,
             };
 
             set_session(model).await.unwrap();

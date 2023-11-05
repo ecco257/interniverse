@@ -5,13 +5,6 @@ use leptos_meta::*;
 use leptos_router::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub struct Session {
-	session_token: String,
-	user_id: i32,
-	expiry_date: i64
-}
-
 cfg_if! {
 	if #[cfg(feature = "ssr")] {
 		use crate::db::db;
@@ -61,7 +54,7 @@ cfg_if! {
 }
 
 #[server]
-pub async fn create_user(username: String, password: String, school: String) -> Result<Session, ServerFnError> {
+pub async fn create_user(username: String, password: String, school: String) -> Result<SessionModel, ServerFnError> {
 	let salt = SaltString::generate(&mut OsRng);
 	let hashed_password = Pbkdf2.hash_password(password.as_bytes(), &salt).unwrap().to_string();
 
@@ -76,15 +69,14 @@ pub async fn create_user(username: String, password: String, school: String) -> 
 
 	debug_assert!(validate_session(id, session_token.clone()).await?);
 
-	Ok(Session {
-		session_token: session_token,
+	Ok(SessionModel {
+		token: session_token,
 		user_id: id,
-		expiry_date: expiry_date,
 	})
 }
 
 #[server]
-pub async fn login_user(username: String, password: String) -> Result<Result<Session, String>, ServerFnError> {
+pub async fn login_user(username: String, password: String) -> Result<Result<SessionModel, String>, ServerFnError> {
 	println!("Logging in user...");
 
 	let mut conn = db().await?;
@@ -104,10 +96,9 @@ pub async fn login_user(username: String, password: String) -> Result<Result<Ses
 
 			debug_assert!(validate_session(user.id, session_token.clone()).await?);
 		
-			Ok(Ok(Session {
-				session_token: session_token,
+			Ok(Ok(SessionModel {
+				token: session_token,
 				user_id: user.id,
-				expiry_date: expiry_date,
 			}))
 		},
 		Err(_) => {
@@ -116,31 +107,9 @@ pub async fn login_user(username: String, password: String) -> Result<Result<Ses
 	}
 }
 
-#[server(SetSessionCookie)]
-pub async fn set_session_cookies(session: Session) -> Result<(), ServerFnError> {
-    use actix_web::{cookie::Cookie, http::header, http::header::HeaderValue, http::StatusCode};
-    use leptos_actix::ResponseOptions;
-
-    let response = expect_context::<ResponseOptions>();
-    response.set_status(StatusCode::OK);
-
-	// Convert session.expiry_date to a date object
-	let expiry_date = chrono::DateTime::<chrono::Utc>::from_utc(chrono::NaiveDateTime::from_timestamp(session.expiry_date, 0), chrono::Utc);
-
-	let id_cookie = Cookie::build("user_id", session.user_id.to_string()).path("/").finish();
-	let session_cookie = Cookie::build("session", session.session_token).path("/").finish();
-
-    if let (Ok(id_cookie), Ok(session_cookie)) = (HeaderValue::from_str(&id_cookie.to_string()), HeaderValue::from_str(&session_cookie.to_string())) {
-		response.append_header(header::SET_COOKIE, id_cookie);
-		response.append_header(header::SET_COOKIE, session_cookie);
-		Ok(())
-	} else {
-		return Err(ServerFnError::ServerError("Failed to set cookie".to_string()));
-	}
-}
-
 use leptos::*;
 use crate::popup::Popup;
+use crate::session::{SessionModel, set_session};
 
 pub fn Login() -> impl IntoView {
     let open = create_rw_signal(true);
@@ -158,7 +127,7 @@ pub fn Login() -> impl IntoView {
 
 			match session {
 				Ok(Ok(session)) => {
-					let response = set_session_cookies(session).await;
+					let response = set_session(session).await;
 
 					match response {
 						Ok(_) => {

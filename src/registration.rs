@@ -2,6 +2,7 @@ use leptos::*;
 use crate::popup::Popup;
 use crate::login::*;
 use leptos::{*, ev::SubmitEvent, leptos_dom::logging::console_log};
+use crate::session::set_session;
 
 pub fn Registration() -> impl IntoView {
     let open = create_rw_signal(true);
@@ -22,7 +23,7 @@ pub fn Registration() -> impl IntoView {
 
             match session {
                 Ok(session) => {
-                    set_session_cookies(session).await;
+                    set_session(session).await.expect("Failed to set session");
                     console_log("Registered");
                     set_status("Registered".to_string());
                 },

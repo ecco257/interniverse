@@ -9,6 +9,8 @@ async fn main() -> std::io::Result<()> {
     use actix_web::{cookie::Key, App, HttpServer, HttpResponse};
     use actix_identity::IdentityMiddleware;
     use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+    use actix_session::config::{BrowserSession, CookieContentSecurity};
+    use actix_web::cookie::SameSite;
 
     let conf = get_configuration(None).await.unwrap();
     let addr = conf.leptos_options.site_addr;
@@ -24,7 +26,14 @@ async fn main() -> std::io::Result<()> {
             .wrap(IdentityMiddleware::default())
             .wrap(SessionMiddleware::builder(
                 CookieSessionStore::default(), Key::from(&[0; 64])
-            ).build())
+            )
+                .cookie_name(String::from("interniverse-cookie"))
+                .cookie_secure(true)
+                .session_lifecycle(BrowserSession::default())
+                .cookie_same_site(SameSite::Strict)
+                .cookie_content_security(CookieContentSecurity::Private)
+                .cookie_http_only(true)
+                .build())
             .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
             // serve JS/WASM/CSS from `pkg`
             .service(Files::new("/pkg", format!("{site_root}/pkg")))
