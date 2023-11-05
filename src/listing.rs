@@ -1,5 +1,5 @@
 use cfg_if::cfg_if;
-use crate::comment::{Comment, get_comments, self};
+use crate::comment::{Comment, get_comments, self, add_comment};
 use crate::popup::Popup;
 use serde::{Deserialize, Serialize};
 use crate::{login::*, listing};
@@ -100,7 +100,7 @@ pub async fn get_listing(id: i64) -> Result<Option<Listing>, ServerFnError> {
     // Perform a query that selects a listing by ID. Adjust SQL as needed.
     let result = sqlx::query_as!(Listing, "SELECT * FROM listings WHERE id = $1", id)
         .fetch_one(&mut conn).await?;
-    Ok(result)
+    Ok(Some(result))
 }
 
 #[server(AddListing, "/add-listing")]
@@ -117,32 +117,16 @@ pub async fn add_listing(listing: Listing) -> Result<Result<(), String>, ServerF
 pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
     use leptos::html::Input;
     let mut next_id = 4;
+    
+    let posts: Resource<i64, Result<Vec<Comment>, ServerFnError>> = create_resource(
+        move || (listing_data.clone().get().get_id()),
+         |id| async move { get_comments(id).await },
+    );
+
     // Create initial list and store as a signal
-    let (comments, set_comments) = create_signal(vec![
-        Comment::new(
-            String::from("Bob"),
-            String::from("Hi. My name is bob. I don't know how to tell you this, but I am the author of the bible. Yep. I am jessus the lord and savior. Just kidding, I'm no god, but Jesus christ is my ni-"),
-            Utc::now().timestamp_millis(),
-            0.65,
-            1,
-        ),
-        Comment::new(
-            String::from("John"),
-            String::from("Hi. My name is John. I am a bot."),
-            Utc::now().timestamp_millis(),
-            0.8,
-            2,
-        ),
-        Comment::new(
-            String::from("Jane"),
-            String::from("I hate this job"),
-            Utc::now().timestamp_millis(),
-            0.2,
-            3,
-        ),
-    ] as Vec<Comment>);
+    // let (comments, set_comments) = create_signal(posts.get().unwrap_or_else(|| Ok(vec![])));
     // Average rating, precalled to the above list of sample comments
-    let (avg_rating, set_avg_rating) = create_signal(get_avg_rating(&comments.get()));
+    let (avg_rating) = create_memo(move |_| get_avg_rating(&posts.get().unwrap().unwrap()));
     // Writing Comments Signals
     let (input_content, set_input_content) =
         create_signal(String::from(""));
@@ -156,21 +140,18 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
         // If our string is good we add it as follows:
         set_input_content(value);
         // Add Value
-        let new_comment = Comment::new(
-            String::from("Guest"),
-            input_content.get(),
-            Utc::now().timestamp_millis(),
-            star_input.get() as f64 / 5.0,
-            next_id,
-        );
+        // let new_comment = Comment::new(
+        //     String::from("Guest"),
+        //     input_content.get(),
+        //     Utc::now().timestamp_millis(),
+        //     star_input.get() as f64 / 5.0,
+        //     next_id,
+        // );
         // Add the comment to the list of comments
-        set_comments.update(move |comments| {
-            comments.push(new_comment);
-        });
-
-        set_avg_rating.update(move |val| {
-            *val = get_avg_rating(&comments.get());
-        });
+        // set_comments.update(move |comments| {
+        //     comments.as_mut().unwrap().push(new_comment);
+        // });
+        add_comment(String::from("Guest"),input_content.get(),star_input.get() as f64 / 5.0,next_id);
         next_id += 1;
     };
 
@@ -380,6 +361,7 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
     };
 
     view! {
+        <Suspense>
         <div class="listing">
             <div class="listing-main">
                 <div class="listing-header">
@@ -412,8 +394,8 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
             </div>
             <div class="comment-container">
                 <For
-                each = comments
-                key = |c| c.get_listing_id()
+                each = move || posts.get().unwrap().unwrap()
+                key = |comment| comment.get_listing_id()
                 children=move |c: Comment| {
                     view! {
                         <div class="comment-shell">
@@ -442,23 +424,24 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
                 <input class="comment-submit" type="submit" value="Submit"/>
             </form>
         </div>
+        </Suspense>
     }
 }
 
 pub fn ListingPage() -> impl IntoView {
-    let id = get_id_from_url().unwrap_or(1); // If ID is not found, default to 1.
+    let (listing_test, set_listing_test) = create_signal(Listing::new(
+        String::from("Google"),
+        String::from("Backend Engineer"),
+        String::from("This is the description for google."),
+        String::from("https://www.google.com/"),
+        0,
+        String::from("RPI"),
+    ));
+    let open = create_rw_signal(true);
 
-    // Create a resource that will fetch the listing data asynchronously.
-    let listing_resource = create_resource(
-        || (),
-		|_| async move { get_listing(id).await },
-    );
-
-	let ulisting = listing_resource.get().unwrap();
-
-	let (listing_data, set_listing_data) = create_signal(ulisting);
-
-	view! {
-		<Listing listing_data=listing_data />
-	}
+    view! {
+            <Listing
+            listing_data=listing_test
+            />
+    }
 }

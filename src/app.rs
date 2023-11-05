@@ -34,6 +34,7 @@ pub fn App() -> impl IntoView {
                 <Routes>
                     <Route path="" view=HomePage/>
                     <Route path="/*any" view=NotFound/>
+                    <Route path="/listing-test" view=ListingPage/>
                 </Routes>
             </main>
         </Router>
