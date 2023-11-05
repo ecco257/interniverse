@@ -1,4 +1,6 @@
 use leptos::*;
+use cfg_if::cfg_if;
+use serde::{Deserialize, Serialize};
 
 /*
 HOW TO WRITE A COMMENT:
@@ -11,25 +13,31 @@ HOW TO WRITE A COMMENT:
 )/>
 */
 
+cfg_if! {
+	if #[cfg(feature = "ssr")] {
+		use crate::db::db;
+    }
+}
+
 // Struct for comment data
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Comment {
     author: String,
     content: String,
-    timestamp: u64,
+    timestamp: i64,
     rating: f64,
-    id: u64,
+    listing_id: i64,
 }
 
 // Implementation of getters for comment data
 impl Comment {
-    pub fn new(author: String, content: String, timestamp: u64, rating:f64, id:u64) -> Self {
+    pub fn new(author: String, content: String, timestamp: i64, rating:f64, listing_id:i64) -> Self {
         Comment {
             author,
             content,
             timestamp,
             rating,
-            id,
+            listing_id,
         }
     }
 
@@ -41,7 +49,7 @@ impl Comment {
         &self.content
     }
 
-    pub fn get_timestamp(&self) -> u64 {
+    pub fn get_timestamp(&self) -> i64 {
         self.timestamp
     }
 
@@ -49,9 +57,17 @@ impl Comment {
         self.rating
     }
 
-    pub fn get_id(&self) -> u64 {
-        self.id
+    pub fn get_listing_id(&self) -> i64 {
+        self.listing_id
     }
+}
+
+#[server(GetComments, "/comments")]
+pub async fn get_comments(listing_id: i64) -> Result<Vec<Comment>, ServerFnError> {
+    let mut conn = db().await?;
+    let comments = sqlx::query_as!(Comment, "SELECT * FROM comments WHERE listing_id = $1", listing_id)
+        .fetch_all(&mut conn).await?;
+    Ok(comments)
 }
 
 // Renders a navbar structure
