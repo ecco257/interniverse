@@ -123,7 +123,7 @@ pub fn Comment(
                     </div>
                 </div>
                 <div class ="comment-timestamp">
-                {DateTime::from_timestamp(0,(comment_data.get_timestamp()/1000) as u32).expect("invalud timestamp").format("%h %d %Y %I:%M$%P").to_string()}
+                {DateTime::from_timestamp(comment_data.get_timestamp()/1000,0).expect("invalid timestamp").format("%h %d %Y %I:%M %p").to_string()}
                 </div>
             </div>
             <div class="comment-content">
