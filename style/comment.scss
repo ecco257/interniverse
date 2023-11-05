@@ -43,24 +43,24 @@
 }
 
 /* Style the star rating container */
-.star-rating {
+.comment .star-rating {
     display: flex;
     align-items: center;
 }
 
 /* Style the hidden progress bar */
-.hidden-progress {
+.comment .hidden-progress {
     visibility: hidden;
     width: 0;
 }
 
 /* Style the star icons */
-.stars {
+.comment .stars {
     display: flex;
     color: #f2c418; /* Default star color */
 }
 
-.star {
+.stars svg {
     height:25px;
 	width:25px;
     margin-right: 5px;

@@ -1,8 +1,7 @@
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use crate::comment::Comment;
-use crate::listing::Listing;
+use crate::listing::ListingPage;
 use crate::popup::PopupPage;
 use crate::header::Header;
 use crate::search_bar::SearchBar;
@@ -31,6 +30,7 @@ pub fn App() -> impl IntoView {
                     <Route path="/popup-test" view=PopupPage/>
                     <Route path="/login-test" view=LoginPage/>
                     <Route path="/registration-test" view=RegistrationPage/>
+                    <Route path="/listing-test" view=ListingPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
@@ -47,8 +47,7 @@ fn HomePage() -> impl IntoView {
 			<Header/>
 			<SearchBar/>
 			<div class="listings">
-                // THIS IS A SAMPLE LISTING DEFINITION
-			</div>
+            </div>
 		</div>
     }
 }

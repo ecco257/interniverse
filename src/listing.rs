@@ -1,28 +1,34 @@
 use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
 use crate::comment::Comment;
 
 // Listing contains information for a company's internship listing along with a list of comments
 #[derive(Clone)]
 pub struct Listing {
     company: String,
+    position: String,
     description: String,
     url: String,
+    id: u64
 }
 
 // Implementation of getters for comment data
 impl Listing {
-    pub fn new(company: String, description: String, url: String) -> Self {
+    pub fn new(company: String, position: String, description: String, url: String, id: u64) -> Self {
         Listing {
             company,
+            position,
             description,
             url,
+            id,
         }
     }
 
     pub fn get_company(&self) -> &String {
         &self.company
+    }
+
+    pub fn get_position(&self) -> &String {
+        &self.position
     }
 
     pub fn get_description(&self) -> &String {
@@ -32,6 +38,10 @@ impl Listing {
     pub fn get_url(&self) -> &String {
         &self.url
     }
+
+    pub fn get_id(&self) -> u64 {
+        self.id
+    }
 }
 
 // Renders a navbar structure
@@ -39,6 +49,7 @@ impl Listing {
 pub fn Listing(
     listing_data: ReadSignal<Listing>
 ) -> impl IntoView {
+    let mut next_id = 4;
     // Create initial list and store as a signal
     let (comments, set_comments) = create_signal(vec![
         Comment::new (
@@ -72,17 +83,18 @@ pub fn Listing(
             String::from("Bob"),
             String::from("Hi. My name is bob. How is your day?"),
             26764,
-            0.65,
-            14
+            0.2,
+            next_id
         );
         // Add the comment to the list of comments
         set_comments.update(move |comments| {
             comments.push(new_comment);
         });
 
-        // Calculate and update the average rating
-        let average = get_avg_rating(&comments.get());
-        set_avg_rating(average);
+        set_avg_rating.update(move |val| {
+            *val = get_avg_rating(&comments.get());
+        });
+        next_id += 1;
     };
     
     // Gets an average rating given a list of comments
@@ -98,18 +110,18 @@ pub fn Listing(
     }
 
     // Generates stars based on the value of progress
-    fn generate_star_avg(filled_stars: usize) -> Vec<impl IntoView> {
-        (1..6).map(|i| {
-            if i < filled_stars {
+    fn generate_star_avg(filled_stars: f64) -> Vec<impl IntoView> {
+        (1..=5).map(|i| {
+            if (i as f64) <= filled_stars {
                 view! {
-                    <svg class = "star" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star-filled" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star-filled" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M8.243 7.34l-6.38 .925l-.113 .023a1 1 0 0 0 -.44 1.684l4.622 4.499l-1.09 6.355l-.013 .11a1 1 0 0 0 1.464 .944l5.706 -3l5.693 3l.1 .046a1 1 0 0 0 1.352 -1.1l-1.091 -6.355l4.624 -4.5l.078 -.085a1 1 0 0 0 -.633 -1.62l-6.38 -.926l-2.852 -5.78a1 1 0 0 0 -1.794 0l-2.853 5.78z" stroke-width="0" fill="currentColor" />
                 </svg>
                 }
             } else {
                 view! {
-                    <svg class = "star" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                     <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" />
                     </svg>
@@ -127,10 +139,10 @@ pub fn Listing(
                     </div>
                     <div class="star-rating">
                         <div class="stars">
-                            {generate_star_avg((avg_rating.get() * 5.0).round() as usize)}
+                            {move || generate_star_avg(avg_rating.get() * 5.0)}
                         </div>
                         <div class="star-count">
-                            {avg_rating.get()*5.0}
+                            {move || (avg_rating.get()*500.0).round()/100.0}
                         </div>
                     </div>
                     <div class ="listing-url">
@@ -147,15 +159,31 @@ pub fn Listing(
                 key = |c| c.get_id()
                 children=move |c: Comment| {
                     view! {
-                        <Comment comment_data=c></Comment>
+                        <Comment comment_data=c />
                     }
                 }
-                ></For>
+                />
             </div>
 
             <button on:click=add_comment>
                 "Add Dummy Comment"
             </button>
         </div>
+    }
+}
+
+pub fn ListingPage() -> impl IntoView {
+    let (listing_test, set_listing_test) = create_signal(Listing::new(
+        String::from("Google"),
+        String::from("Backend Engineer"),
+        String::from("This is the description for google."),
+        String::from("https://www.google.com/"),
+        0
+    ));
+
+    view! {
+        <Listing
+        listing_data=listing_test
+        />
     }
 }
