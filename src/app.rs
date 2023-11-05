@@ -48,7 +48,6 @@ fn HomePage() -> impl IntoView {
 			<SearchBar/>
 			<div class="listings">
                 // THIS IS A SAMPLE LISTING DEFINITION
-                <Listing listing_data=test_listing></Listing>
 			</div>
 		</div>
     }
