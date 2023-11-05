@@ -7,6 +7,7 @@ pub mod comment;
 use cfg_if::cfg_if;
 pub mod header;
 pub mod search_bar;
+pub mod login;
 
 cfg_if! {
 if #[cfg(feature = "hydrate")] {

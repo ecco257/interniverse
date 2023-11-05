@@ -4,6 +4,7 @@ use leptos_router::*;
 use crate::popup::PopupPage;
 use crate::header::Header;
 use crate::search_bar::SearchBar;
+use crate::login::LoginPage;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -24,6 +25,7 @@ pub fn App() -> impl IntoView {
                 <Routes>
                     <Route path="" view=HomePage/>
                     <Route path="/popup-test" view=PopupPage/>
+                    <Route path="/login-test" view=LoginPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>

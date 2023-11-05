@@ -22,7 +22,7 @@ cfg_if! {
 		use chrono;
 
 		use rand::rngs::OsRng;
-	
+
 		async fn create_user(username: String, password: String, school: String) -> Result<Session, ServerFnError> {
 			let salt = SaltString::generate(&mut OsRng);
 			let hashed_password = Pbkdf2.hash_password(password.as_bytes(), &salt).unwrap().to_string();
@@ -51,7 +51,7 @@ cfg_if! {
 
 			let session_token = u128::from_le_bytes(u128_pool);
 			let expiry_date = (chrono::Utc::now() + chrono::Duration::hours(1)).timestamp_millis();
-			
+
 			let mut conn = db().await?;
 			let rows = sqlx::query!("INSERT INTO sessions (session_token, user_id, expiry_date) VALUES ($1, $2, $3)",
 				session_token.to_string(), id, expiry_date)
@@ -81,3 +81,49 @@ cfg_if! {
 	}
 }
 
+
+use leptos::*;
+use crate::popup::Popup;
+
+pub fn Login() -> impl IntoView {
+    let open = create_rw_signal(true);
+    let (username, set_username) = create_signal("".to_string());
+    let (password, set_password) = create_signal("".to_string());
+
+    view! {
+        <Popup open=open>
+            <div class="login-container">
+                <h1>Login</h1>
+                <label for="login-username-input"><b>Username</b></label>
+                <input
+                    class="login-input"
+                    name="login-username-input"
+                    type="text"
+                    on:input=move |ev| {
+                        set_username(event_target_value(&ev));
+                    }
+
+                    prop:value=username
+                />
+                <label for="login-password-input"><b>Password</b></label>
+                <input
+                    class="login-input"
+                    name="login-password-input"
+                    type="password"
+                    on:input=move |ev| {
+                        set_password(event_target_value(&ev));
+                    }
+
+                    prop:value=password
+                />
+                <button class="login-button">Login</button>
+            </div>
+        </Popup>
+    }
+}
+
+pub fn LoginPage() -> impl IntoView {
+    view! {
+        <Login/>
+    }
+}
