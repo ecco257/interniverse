@@ -31,6 +31,21 @@ pub async fn set_session(model: SessionModel) -> Result<(), ServerFnError> {
     ).await??)
 }
 
+#[server(EndSession)]
+pub async fn end_session() -> Result<(), ServerFnError> {
+    use leptos_actix::extract;
+    use actix_session::Session;
+    use actix_web::web::{ Json };
+
+    extract(
+        |session: Session| async move {
+            session.remove("session")
+        }
+    ).await;
+
+    Ok(())
+}
+
 #[component]
 pub fn SessionPage() -> impl IntoView {
     let (current, set_current) = create_signal("".to_string());

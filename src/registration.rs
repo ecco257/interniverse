@@ -100,10 +100,3 @@ pub fn Registration() -> impl IntoView {
         </Popup>
     }
 }
-
-#[component]
-pub fn RegistrationPage() -> impl IntoView {
-    view! {
-        <Registration/>
-    }
-}

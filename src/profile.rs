@@ -1,7 +1,7 @@
 use leptos::*;
 use leptos::leptos_dom::logging::console_log;
 use crate::popup::Popup;
-use crate::session::get_session;
+use crate::session::{end_session, get_session};
 
 #[cfg(feature = "ssr")]
 use crate::db::db;
@@ -50,9 +50,7 @@ pub async fn get_profile() -> Result<Option<ProfileData>, ServerFnError> {
 }
 
 #[component]
-pub fn Profile() -> impl IntoView {
-    let open = create_rw_signal(true);
-
+pub fn Profile(open: RwSignal<bool>, reload_profile: RwSignal<bool>) -> impl IntoView {
     let profile = create_blocking_resource(
         || (),
         |_| async move {
@@ -64,6 +62,22 @@ pub fn Profile() -> impl IntoView {
             profile
         }
     );
+
+    create_effect(move |_| {
+        if reload_profile.get() {
+            profile.refetch();
+
+            reload_profile.set(false);
+        }
+    });
+
+    let logout = move |_| {
+        spawn_local(async move {
+            end_session().await.ok();
+
+            open.set(false);
+        });
+    };
 
     view! {
         <Popup width=MaybeSignal::Static(20) open=open>
@@ -78,16 +92,10 @@ pub fn Profile() -> impl IntoView {
                 >
                 <p><b>Name: </b>{profile.get().unwrap().unwrap().name}</p>
                 <p><b>School: </b>{profile.get().unwrap().unwrap().school}</p>
+                <button class="login-button" on:click=logout>Logout</button>
                 </Show>
                 </Suspense>
             </div>
         </Popup>
-    }
-}
-
-#[component]
-pub fn ProfilePage() -> impl IntoView {
-    view! {
-        <Profile/>
     }
 }
