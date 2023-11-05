@@ -96,21 +96,21 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
         Comment::new(
             String::from("Bob"),
             String::from("Hi. My name is bob. How is your day?"),
-            Utc::now().format("%h %d %Y %I:%M$%P").to_string(),
+            Utc::now().timestamp_millis(),
             0.65,
             1,
         ),
         Comment::new(
             String::from("John"),
             String::from("Hi. My name is John. I am a bot."),
-            Utc::now().format("%h %d %Y %I:%M$%P").to_string(),
+            Utc::now().timestamp_millis(),
             0.8,
             2,
         ),
         Comment::new(
             String::from("Jane"),
             String::from("I hate this job"),
-            Utc::now().format("%h %d %Y %I:%M$%P").to_string(),
+            Utc::now().timestamp_millis(),
             0.2,
             3,
         ),
@@ -133,7 +133,7 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
         let new_comment = Comment::new(
             String::from("Guest"),
             input_content.get(),
-            Utc::now().format("%h %d %Y %I:%M %P").to_string(),
+            Utc::now().timestamp_millis(),
             star_input.get() as f64 / 5.0,
             next_id,
         );
@@ -387,7 +387,7 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
             <div class="comment-container">
                 <For
                 each = comments
-                key = |c| c.get_id()
+                key = |c| c.get_listing_id()
                 children=move |c: Comment| {
                     view! {
                         <Comment comment_data=c />
