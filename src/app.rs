@@ -6,7 +6,6 @@ use wasm_bindgen::JsCast;
 use crate::listing::ListingPage;
 use crate::listing::Listing;
 use crate::listing::get_all_listings;
-use crate::popup::PopupPage;
 use crate::header::Header;
 use crate::search_bar::SearchBar;
 use crate::listing_prev::ListingPrev;
@@ -34,13 +33,6 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
-                    <Route path="/popup-test" view=PopupPage/>
-                    <Route path="/login-test" view=LoginPage/>
-                    <Route path="/registration-test" view=RegistrationPage/>
-                    <Route path="/listing-test" view=ListingPage/>
-                    <Route path="/session-test" view=SessionPage/>
-                    <Route path="/profile-test" view=ProfilePage/>
-					<Route path="/listing/*any" view=ListingPage/>
                     <Route path="/*any" view=NotFound/>
                 </Routes>
             </main>
