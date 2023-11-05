@@ -2,15 +2,30 @@ use cfg_if::cfg_if;
 use crate::comment::{Comment, get_comments, self};
 use crate::popup::Popup;
 use serde::{Deserialize, Serialize};
-use crate::login::*;
+use crate::{login::*, listing};
 use chrono::prelude::*;
 use leptos::*;
 use leptos::{ev::SubmitEvent, *};
+use web_sys::window;
 
 cfg_if! {
 	if #[cfg(feature = "ssr")] {
 		use crate::db::db;
     }
+}
+
+fn get_id_from_url() -> Option<i64> {
+    if let Some(window) = window() {
+        if let Some(location) = window.location().href().ok() {
+            // Extract the ID from the URL.
+            // Assuming the URL is something like 'http://example.com/postpage/123'
+            let parts: Vec<&str> = location.split('/').collect();
+            if parts.len() > 1 {
+                return parts.last()?.parse::<i64>().ok();
+            }
+        }
+    }
+    None
 }
 
 // Listing contains information for a company's internship listing along with a list of comments
@@ -76,6 +91,16 @@ pub async fn get_all_listings() -> Result<Vec<Listing>, ServerFnError> {
     let listings = sqlx::query_as!(Listing, "SELECT * FROM listings")
         .fetch_all(&mut conn).await?;
     Ok(listings)
+}
+
+#[server(GetListing, "/server")]
+pub async fn get_listing(id: i64) -> Result<Option<Listing>, ServerFnError> {
+    let mut conn = db().await?;
+
+    // Perform a query that selects a listing by ID. Adjust SQL as needed.
+    let result = sqlx::query_as!(Listing, "SELECT * FROM listings WHERE id = $1", id)
+        .fetch_one(&mut conn).await?;
+    Ok(result)
 }
 
 #[server(AddListing, "/add-listing")]
@@ -421,19 +446,19 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
 }
 
 pub fn ListingPage() -> impl IntoView {
-    let (listing_test, set_listing_test) = create_signal(Listing::new(
-        String::from("Google"),
-        String::from("Backend Engineer"),
-        String::from("This is the description for google."),
-        String::from("https://www.google.com/"),
-        0,
-        String::from("RPI"),
-    ));
-    let open = create_rw_signal(true);
+    let id = get_id_from_url().unwrap_or(1); // If ID is not found, default to 1.
 
-    view! {
-            <Listing
-            listing_data=listing_test
-            />
-    }
+    // Create a resource that will fetch the listing data asynchronously.
+    let listing_resource = create_resource(
+        || (),
+		|_| async move { get_listing(id).await },
+    );
+
+	let ulisting = listing_resource.get().unwrap();
+
+	let (listing_data, set_listing_data) = create_signal(ulisting);
+
+	view! {
+		<Listing listing_data=listing_data />
+	}
 }

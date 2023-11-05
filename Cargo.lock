@@ -1527,6 +1527,7 @@ dependencies = [
  "sqlx",
  "tokio",
  "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]

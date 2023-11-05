@@ -26,6 +26,7 @@ serde = { version = "1.0.190", features = ["derive"] }
 rand = "0.8.5"
 tokio = { version = "1.33.0", features = ["full"], optional = true }
 chrono = "0.4.31"
+web-sys = "0.3.65"
 [features]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
