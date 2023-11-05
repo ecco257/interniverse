@@ -8,6 +8,7 @@ pub mod header;
 pub mod search_bar;
 pub mod listing_prev;
 pub mod login;
+pub mod registration;
 
 cfg_if! {
 if #[cfg(feature = "hydrate")] {
