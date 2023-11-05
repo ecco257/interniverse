@@ -1,57 +1,51 @@
-.listing-prev {
-  background: #f9f9f9; // Light grey background
-  border-radius: 8px; // Rounded corners
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Subtle shadow
-  padding: 1rem; // Spacing inside the block
-  margin: 0.5rem auto; // Center the blocks with equal margin on top and bottom
-  max-width: 50%; // Max width, can be adjusted
-  min-width: 350px;
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-content: center;
-	cursor: pointer; // Change the cursor to a pointer on hover
-	justify-content: space-between;
+	 /* Listing Preview Styles */
+	 .listing-prev {
+	 	background: #fff;
+	 	border: 1px solid #ccc;
+	 	border-radius: 5px;
+	 	box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+	 	padding: 20px;
+	 	display: flex;
+	 	justify-content: space-between;
+	 	align-items: center;
+	 	margin: 20px auto;
+	 	width: 100%;
+	 	/* Expand to container width */
+	 	max-width: 900px;
+	 	/* Adjust as needed */
+	 	cursor: pointer;
 
-	.left-items {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-	.right-items {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
+	 	&:hover {
+	 		box-shadow: 0 5px 8px rgba(0, 0, 0, 0.15);
+	 		transform: translateY(-2px);
+	 		transition: box-shadow 0.3s ease, transform 0.3s ease;
+	 	}
 
-	.left-items {
-		.listing-company {
-			font-weight: bold;
-			font-size: 1.8rem;
-			color: #333; 
-		}
+	 	.left-items,
+	 	.right-items {
+	 		display: flex;
+	 		flex-direction: column;
+	 		gap: 0.5rem;
 
-		.listing-position {
-			font-size: 1.5rem;
-			color: #555; 
-		}
+	 		.listing-company {
+	 			font-weight: bold;
+	 			font-size: 1.8rem;
+	 			color: #333;
+	 		}
 
-		.listing-comments {
-			font-size: 0.85rem;
-			color: #777; 
-		}
-	}
+	 		.listing-position {
+	 			font-size: 1.5rem;
+	 			color: #555;
+	 		}
 
-	.right-items {
-		.listing-rating {
-			font-size: 1rem;
-			color: #555;
-		}
-	}
-}
+	 		.listing-comments {
+	 			font-size: 0.85rem;
+	 			color: #777;
+	 		}
 
-.listing-prev:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px); 
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
+	 		.listing-rating {
+	 			font-size: 1rem;
+	 			color: #555;
+	 		}
+	 	}
+	 }
