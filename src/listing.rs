@@ -1,31 +1,16 @@
 use cfg_if::cfg_if;
-use crate::comment::{Comment, get_comments, self, add_comment};
+use crate::comment::{Comment, get_comments, self};
 use crate::popup::Popup;
 use serde::{Deserialize, Serialize};
-use crate::{login::*, listing};
+use crate::login::*;
 use chrono::prelude::*;
 use leptos::*;
 use leptos::{ev::SubmitEvent, *};
-use web_sys::window;
 
 cfg_if! {
 	if #[cfg(feature = "ssr")] {
 		use crate::db::db;
     }
-}
-
-fn get_id_from_url() -> Option<i64> {
-    if let Some(window) = window() {
-        if let Some(location) = window.location().href().ok() {
-            // Extract the ID from the URL.
-            // Assuming the URL is something like 'http://example.com/postpage/123'
-            let parts: Vec<&str> = location.split('/').collect();
-            if parts.len() > 1 {
-                return parts.last()?.parse::<i64>().ok();
-            }
-        }
-    }
-    None
 }
 
 // Listing contains information for a company's internship listing along with a list of comments
@@ -93,16 +78,6 @@ pub async fn get_all_listings() -> Result<Vec<Listing>, ServerFnError> {
     Ok(listings)
 }
 
-#[server(GetListing, "/server")]
-pub async fn get_listing(id: i64) -> Result<Option<Listing>, ServerFnError> {
-    let mut conn = db().await?;
-
-    // Perform a query that selects a listing by ID. Adjust SQL as needed.
-    let result = sqlx::query_as!(Listing, "SELECT * FROM listings WHERE id = $1", id)
-        .fetch_one(&mut conn).await?;
-    Ok(Some(result))
-}
-
 #[server(AddListing, "/add-listing")]
 pub async fn add_listing(listing: Listing) -> Result<Result<(), String>, ServerFnError> {
     let mut conn = db().await?;
@@ -115,18 +90,36 @@ pub async fn add_listing(listing: Listing) -> Result<Result<(), String>, ServerF
 // Renders a navbar structure
 #[component]
 pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
+    use crate::session::GetSession;
+
     use leptos::html::Input;
     let mut next_id = 4;
-    
-    let posts: Resource<i64, Result<Vec<Comment>, ServerFnError>> = create_resource(
-        move || (listing_data.clone().get().get_id()),
-         |id| async move { get_comments(id).await },
-    );
-
     // Create initial list and store as a signal
-    // let (comments, set_comments) = create_signal(posts.get().unwrap_or_else(|| Ok(vec![])));
+    let (comments, set_comments) = create_signal(vec![
+        Comment::new(
+            String::from("Connor"),
+            String::from("This internship was really cool. I learned a lot. Programming with rust is fun!"),
+            Utc::now().timestamp_millis(),
+            0.6,
+            1,
+        ),
+        Comment::new(
+            String::from("Ethan"),
+            String::from("I learned a lot and enjoyed working with the team. Would be glad to return next year. I highly recommend this to anybody with good experience with C++."),
+            Utc::now().timestamp_millis(),
+            1.0,
+            2,
+        ),
+        Comment::new(
+            String::from("Carter"),
+            String::from("I hate this job. Don't recommend."),
+            Utc::now().timestamp_millis(),
+            0.2,
+            3,
+        ),
+    ] as Vec<Comment>);
     // Average rating, precalled to the above list of sample comments
-    let (avg_rating) = create_memo(move |_| get_avg_rating(&posts.get().unwrap().unwrap()));
+    let (avg_rating, set_avg_rating) = create_signal(get_avg_rating(&comments.get()));
     // Writing Comments Signals
     let (input_content, set_input_content) =
         create_signal(String::from(""));
@@ -140,18 +133,21 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
         // If our string is good we add it as follows:
         set_input_content(value);
         // Add Value
-        // let new_comment = Comment::new(
-        //     String::from("Guest"),
-        //     input_content.get(),
-        //     Utc::now().timestamp_millis(),
-        //     star_input.get() as f64 / 5.0,
-        //     next_id,
-        // );
+        let new_comment = Comment::new(
+            String::from("Guest"),
+            input_content.get(),
+            Utc::now().timestamp_millis(),
+            star_input.get() as f64 / 5.0,
+            next_id,
+        );
         // Add the comment to the list of comments
-        // set_comments.update(move |comments| {
-        //     comments.as_mut().unwrap().push(new_comment);
-        // });
-        add_comment(String::from("Guest"),input_content.get(),star_input.get() as f64 / 5.0,next_id);
+        set_comments.update(move |comments| {
+            comments.push(new_comment);
+        });
+
+        set_avg_rating.update(move |val| {
+            *val = get_avg_rating(&comments.get());
+        });
         next_id += 1;
     };
 
@@ -361,7 +357,6 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
     };
 
     view! {
-        <Suspense>
         <div class="listing">
             <div class="listing-main">
                 <div class="listing-header">
@@ -394,8 +389,8 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
             </div>
             <div class="comment-container">
                 <For
-                each = move || posts.get().unwrap().unwrap()
-                key = |comment| comment.get_listing_id()
+                each = comments
+                key = |c| c.get_listing_id()
                 children=move |c: Comment| {
                     view! {
                         <div class="comment-shell">
@@ -424,21 +419,18 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
                 <input class="comment-submit" type="submit" value="Submit"/>
             </form>
         </div>
-        </Suspense>
     }
 }
 
 pub fn ListingPage() -> impl IntoView {
     let (listing_test, set_listing_test) = create_signal(Listing::new(
-        String::from("Google"),
-        String::from("Backend Engineer"),
-        String::from("This is the description for google."),
-        String::from("https://www.google.com/"),
+        String::from("Zedbruh"),
+        String::from("Backend Developer"),
+        String::from("Zedbruh is an innovative and dynamic startup based in the vibrant city of Troy, New York. Our mission is to revolutionize the digital landscape by creating cutting-edge web solutions that seamlessly merge aesthetics and functionality. We are a passionate team of tech enthusiasts and creative minds, dedicated to pushing the boundaries of technology and redefining the way people experience the digital world."),
+        String::from("https://hackrpi.com/"),
         0,
         String::from("RPI"),
     ));
-    let open = create_rw_signal(true);
-
     view! {
             <Listing
             listing_data=listing_test
