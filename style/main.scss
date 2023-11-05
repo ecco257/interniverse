@@ -6,9 +6,15 @@
 @import 'comment.scss';
 @import 'listing_prev.scss';
 @import 'login.scss';
+@import 'listing.scss';
 
 body {
 	font-family: sans-serif;
 	text-align: center;
 	margin: 0;
+}
+
+main {
+	width: 100%;
+	height: 100%;
 }

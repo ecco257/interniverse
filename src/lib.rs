@@ -1,12 +1,15 @@
 pub mod app;
 pub mod db;
 pub mod popup;
+pub mod listing;
 pub mod comment;
 use cfg_if::cfg_if;
 pub mod header;
 pub mod search_bar;
 pub mod listing_prev;
 pub mod login;
+pub mod registration;
+pub mod session;
 
 cfg_if! {
 if #[cfg(feature = "hydrate")] {

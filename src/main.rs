@@ -6,6 +6,11 @@ async fn main() -> std::io::Result<()> {
     use leptos::*;
     use leptos_actix::{generate_route_list, LeptosRoutes};
     use interniverse::app::*;
+    use actix_web::{cookie::Key, App, HttpServer, HttpResponse};
+    use actix_identity::IdentityMiddleware;
+    use actix_session::{storage::CookieSessionStore, SessionMiddleware};
+    use actix_session::config::{BrowserSession, CookieContentSecurity};
+    use actix_web::cookie::SameSite;
 
     let conf = get_configuration(None).await.unwrap();
     let addr = conf.leptos_options.site_addr;
@@ -18,6 +23,17 @@ async fn main() -> std::io::Result<()> {
         let site_root = &leptos_options.site_root;
 
         App::new()
+            .wrap(IdentityMiddleware::default())
+            .wrap(SessionMiddleware::builder(
+                CookieSessionStore::default(), Key::from(&[0; 64])
+            )
+                .cookie_name(String::from("interniverse-cookie"))
+                .cookie_secure(true)
+                .session_lifecycle(BrowserSession::default())
+                .cookie_same_site(SameSite::Strict)
+                .cookie_content_security(CookieContentSecurity::Private)
+                .cookie_http_only(true)
+                .build())
             .route("/api/{tail:.*}", leptos_actix::handle_server_fns())
             // serve JS/WASM/CSS from `pkg`
             .service(Files::new("/pkg", format!("{site_root}/pkg")))
@@ -27,7 +43,7 @@ async fn main() -> std::io::Result<()> {
             .service(favicon)
             .leptos_routes(leptos_options.to_owned(), routes.to_owned(), App)
             .app_data(web::Data::new(leptos_options.to_owned()))
-        //.wrap(middleware::Compress::default())
+
     })
     .bind(&addr)?
     .run()
