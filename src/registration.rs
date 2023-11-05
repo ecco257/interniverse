@@ -100,6 +100,7 @@ pub fn Registration() -> impl IntoView {
     }
 }
 
+#[component]
 pub fn RegistrationPage() -> impl IntoView {
     view! {
         <Registration/>

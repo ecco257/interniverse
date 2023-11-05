@@ -38,6 +38,7 @@ pub async fn set_session(model: SessionModel) -> Result<(), ServerFnError> {
     ).await??)
 }
 
+#[component]
 pub fn SessionPage() -> impl IntoView {
     let (current, set_current) = create_signal("".to_string());
 

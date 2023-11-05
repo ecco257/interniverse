@@ -216,6 +216,7 @@ pub fn Login() -> impl IntoView {
     }
 }
 
+#[component]
 pub fn LoginPage() -> impl IntoView {
     view! {
         <Login/>
