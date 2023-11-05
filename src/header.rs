@@ -33,7 +33,7 @@ pub fn Header(profile_open: RwSignal<bool>, login_open: RwSignal<bool>) -> impl 
                 </label>
                 // School Name
                 // Replace "YourSchoolName" with the actual name of the school, but if is_toggled is false, then display "All Schools"
-				<span class="school-name">{ move || if is_toggled.get() { "YourSchoolName" } else { "All Schools" } }</span>
+				<span class="school-name">{ move || if is_toggled.get() { "RPI" } else { "All Schools" } }</span>
                 // Plus Icon for New Post
                 <a class="new-post-btn" href="/new-post">
 					<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-circle-plus" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
