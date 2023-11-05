@@ -10,11 +10,11 @@ use crate::popup::PopupPage;
 use crate::header::Header;
 use crate::search_bar::SearchBar;
 use crate::listing_prev::ListingPrev;
-use crate::login::LoginPage;
+use crate::login::Login;
 use leptos::leptos_dom::logging::console_log;
-use crate::registration::RegistrationPage;
+use crate::registration::Registration;
 use crate::session::SessionPage;
-use crate::profile::ProfilePage;
+use crate::profile::Profile;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -63,9 +63,15 @@ fn HomePage() -> impl IntoView {
 
     let (filtered_listings, set_filtered_listings) = create_signal::<View>(View::Text(Text::new("No results".to_string().into())));
 
+    let profile_open = create_rw_signal(false);
+
+    let login_open = create_rw_signal(false);
+
+    let reload_profile = create_rw_signal(false);
+
     view! {
 		<div class="home-page">
-            <Header/>
+            <Header profile_open=profile_open login_open=login_open/>
             <SearchBar 
                 search_query=search_query 
                 set_search_query=set_search_query
@@ -77,8 +83,8 @@ fn HomePage() -> impl IntoView {
                 create_effect(move |_| {
                     let filter_text = search_query.get().to_lowercase();
 					let all_listings = match all_listings.get() {
-						Some(Ok(listings)) => listings, 
-						Some(Err(_)) => return, 
+						Some(Ok(listings)) => listings,
+						Some(Err(_)) => return,
 						None => return,
 					};
 					if all_listings.is_empty() {
@@ -86,7 +92,7 @@ fn HomePage() -> impl IntoView {
 					}
 					let filtered = all_listings.iter().filter(|listing| {
 						listing.get_company().to_lowercase().contains(&filter_text) || listing.get_position().to_lowercase().contains(&filter_text)
-					}).collect::<Vec<&Listing>>();		
+					}).collect::<Vec<&Listing>>();
 					let content = filtered.iter().map(|listing| {
 						view! {
 							<ListingPrev
@@ -102,6 +108,8 @@ fn HomePage() -> impl IntoView {
                 });
             }
         </div>
+        <Profile open=profile_open reload_profile=reload_profile/>
+        <Login open=login_open reload_profile=reload_profile/>
     }
 }
 

@@ -1,9 +1,24 @@
 use leptos::*;
+use crate::session::get_session;
 
 #[component]
-pub fn Header() -> impl IntoView {
+pub fn Header(profile_open: RwSignal<bool>, login_open: RwSignal<bool>) -> impl IntoView {
     // Signal for the toggle switch
     let (is_toggled, set_is_toggled) = create_signal(false);
+
+    let on_profile = move |_| {
+        spawn_local(async move {
+            let session = get_session().await;
+
+            if session.is_err() || session.unwrap().is_none() {
+                login_open.set(true);
+                profile_open.set(false);
+            } else {
+                profile_open.set(true);
+                login_open.set(false);
+            }
+        });
+    };
 
     view! {
         <header class="main-header">
@@ -30,7 +45,7 @@ pub fn Header() -> impl IntoView {
                 </a>
                 // Profile Circle Icon
                 <div class="profile-menu">
-                    <button class="profile-btn" aria-label="User profile">
+                    <button class="profile-btn" aria-label="User profile" on:click=on_profile>
 						<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-circle" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffffff" fill="none" stroke-linecap="round" stroke-linejoin="round">
 							<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
 							<path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -38,12 +53,6 @@ pub fn Header() -> impl IntoView {
 							<path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
 						</svg>
                     </button>
-                    // Profile Dropdown - Hidden by default, shown when profile-btn is clicked.
-                    // You will need to add the interactivity with JavaScript or additional Rust logic.
-                    <div class="profile-dropdown hidden">
-                        <a href="/settings">{"Settings"}</a>
-                        <a href="/logout">{"Log Out"}</a>
-                    </div>
                 </div>
             </div>
         </header>
