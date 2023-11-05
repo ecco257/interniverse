@@ -16,14 +16,14 @@ HOW TO WRITE A COMMENT:
 pub struct Comment {
     author: String,
     content: String,
-    timestamp: u64,
+    timestamp: String,
     rating: f64,
     id: u64,
 }
 
 // Implementation of getters for comment data
 impl Comment {
-    pub fn new(author: String, content: String, timestamp: u64, rating:f64, id:u64) -> Self {
+    pub fn new(author: String, content: String, timestamp: String, rating:f64, id:u64) -> Self {
         Comment {
             author,
             content,
@@ -41,8 +41,8 @@ impl Comment {
         &self.content
     }
 
-    pub fn get_timestamp(&self) -> u64 {
-        self.timestamp
+    pub fn get_timestamp(&self) -> &String {
+        &self.timestamp
     }
 
     pub fn get_rating(&self) -> f64 {

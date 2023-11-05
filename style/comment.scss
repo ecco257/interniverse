@@ -1,4 +1,3 @@
-/* Style the outer comment container */
 .comment {
     border: 1px solid #ccc;
     padding: 15px;
@@ -10,7 +9,6 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Style the comment header section */
 .comment-header {
     display: flex;
     justify-content: space-between;
@@ -21,43 +19,37 @@
     border-radius: 5px 5px 0 0;
 }
 
-/* Style the comment author's profile */
 .comment-profile {
     font-weight: bold;
     margin-right: 10px;
-    color: #3498db; /* Blue text color for the name */
-    text-decoration: underline; /* Add an underline to the name */
+    color: #3498db;
+    text-decoration: underline;
 }
 
-/* Style the comment timestamp */
 .comment-timestamp {
     font-size: 12px;
     color: #666;
 }
 
-/* Style the comment content */
 .comment-content {
     padding: 10px;
     margin-top: 10px;
     color: #333;
 }
 
-/* Style the star rating container */
 .comment .star-rating {
     display: flex;
     align-items: center;
 }
 
-/* Style the hidden progress bar */
 .comment .hidden-progress {
     visibility: hidden;
     width: 0;
 }
 
-/* Style the star icons */
 .comment .stars {
     display: flex;
-    color: #f2c418; /* Default star color */
+    color: #f2c418;
 }
 
 .stars svg {

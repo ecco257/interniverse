@@ -1,95 +1,129 @@
-/* Apply a full-page background color and center the content */
-body {
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-/* Style the outer listing container */
 .listing {
     background-color: #fff;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    max-width: 800px;
-    width: 100%;
+    max-width: 900px; 
+    width: 75%;
+    margin: 0 auto;
 }
 
-/* Style the listing header section */
 .listing-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #3498db; /* Blue background color for the header */
-    padding: 15px;
+    background: linear-gradient(135deg, #3498db, #1f77c7); 
+    padding: 15px 20px; 
     border-radius: 5px 5px 0 0;
 }
 
-/* Style the listing company */
 .listing-company {
     font-weight: bold;
-    color: #fff; /* White text color for the company */
+    color: #fff;
+    padding-right: 10px; 
 }
 
-/* Style the star rating container */
-.listing-header .star-rating {
+.listing .star-rating {
     display: flex;
     align-items: center;
 }
 
-/* Style the star icons */
-.listing-header .stars {
+.listing .stars {
     display: flex;
-    color: #f2c418; /* Default star color */
+    color: #f2c418;
+    margin-right: 5px; 
 }
 
-/* Style the star count */
-.listing-header .star-count {
+.listing .star-count {
     font-size: 18px;
-    color: #fff; /* White text color for the count */
+    color: #fff;
+    vertical-align: middle; 
 }
 
-/* Style the listing URL */
-.listing-header .listing-url {
-    color: #3498db; /* Blue text color for the URL */
-    text-decoration: underline; /* Add an underline to the URL */
+.listing-header .listing-url a {
+    color: white;
+    text-decoration: underline;
     margin-top: 10px;
+    display: inline-block; 
 }
 
-/* Style the listing description */
+.listing-header .listing-url svg {
+    width: 25px;
+    height: 25px;
+}
+
 .listing-description {
     padding: 20px;
     color: #333;
+    background-color: #f7f7f7; 
 }
 
-/* Style the comment container */
-.comment-container {
+.listing .comment-container {
     margin-top: 20px;
-    max-height:60vh;
-    overflow-y:scroll;
+    max-height: 60vh;
+    overflow-y: scroll;
 }
 
-.listing .stars svg {
-    height: 25px;
-    width: 25px;
+.listing-position {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px;
+    color: #333; 
+}
+
+.listing .comment-form {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.listing .comment-form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.listing .comment-form .star-rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.listing .comment-form .stars {
+    display: flex;
+    color: #f2c418;
     margin-right: 5px;
+    cursor: pointer;
 }
 
-/* Style the "Add Dummy Comment" button */
-button {
+.listing .comment-form .comment-submit {
     background-color: #3498db;
     color: #fff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
+    transition: background-color 0.3s;
+    margin-top: 10px;
 }
 
-button:hover {
+.listing .comment-form .comment-submit:hover {
     background-color: #1f77c7;
+}
+
+.listing .comment-form .comment-box {
+    width: 90%;
+    text-wrap:wrap;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
