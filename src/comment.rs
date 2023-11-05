@@ -2,7 +2,6 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 
-
 /*
 HOW TO WRITE A COMMENT:
 
@@ -15,38 +14,45 @@ HOW TO WRITE A COMMENT:
 */
 
 // Struct for comment data
+#[derive(Clone)]
 pub struct Comment {
     author: String,
     content: String,
     timestamp: u64,
     rating: f64,
+    id: u64,
 }
 
 // Implementation of getters for comment data
 impl Comment {
-    pub fn new(author: String, content: String, timestamp: u64, rating:f64) -> Self {
+    pub fn new(author: String, content: String, timestamp: u64, rating:f64, id:u64) -> Self {
         Comment {
             author,
             content,
             timestamp,
-            rating
+            rating,
+            id,
         }
     }
 
-    fn get_author(&self) -> &String {
+    pub fn get_author(&self) -> &String {
         &self.author
     }
 
-    fn get_content(&self) -> &String {
+    pub fn get_content(&self) -> &String {
         &self.content
     }
 
-    fn get_timestamp(&self) -> u64 {
+    pub fn get_timestamp(&self) -> u64 {
         self.timestamp
     }
 
-    fn get_rating(&self) -> f64 {
+    pub fn get_rating(&self) -> f64 {
         self.rating
+    }
+
+    pub fn get_id(&self) -> u64 {
+        self.id
     }
 }
 
@@ -60,8 +66,8 @@ pub fn Comment(
     let filled_stars = (progress * 5.0).round() as usize;   
     // Generates stars based on the value of progress
     fn generate_star_icons(filled_stars: usize) -> Vec<impl IntoView> {
-        (0..5).map(|i| {
-            if i < filled_stars {
+        (1..6).map(|i| {
+            if i <= filled_stars {
                 view! {
                     <svg class = "star" xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-star-filled" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#ffbf00" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -88,7 +94,6 @@ pub fn Comment(
                     {comment_data.get_author()}
                 </div>
                 <div class="star-rating">
-                    <progress max="5" value={progress} class="hidden-progress"></progress>
                     <div class="stars">
                         {star_icons}
                     </div>
