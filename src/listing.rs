@@ -75,6 +75,15 @@ pub async fn get_all_listings() -> Result<Vec<Listing>, ServerFnError> {
     Ok(listings)
 }
 
+#[server(AddListing, "/add-listing")]
+pub async fn add_listing(listing: Listing) -> Result<Result<(), String>, ServerFnError> {
+    let mut conn = db().await?;
+    let rows = sqlx::query!("INSERT INTO listings (company, position, description, url, id, school) VALUES ($1, $2, $3, $4, $5, $6)",
+        listing.company, listing.position, listing.description, listing.url, listing.id, listing.school)
+        .execute(&mut conn).await?;
+    Ok(Ok(()))
+}
+
 // Renders a navbar structure
 #[component]
 pub fn Listing(

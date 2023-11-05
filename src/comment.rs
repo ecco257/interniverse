@@ -70,6 +70,15 @@ pub async fn get_comments(listing_id: i64) -> Result<Vec<Comment>, ServerFnError
     Ok(comments)
 }
 
+#[server(AddComment, "/add_comment")]
+pub async fn add_comment(author: String, content: String, rating: f64, listing_id: i64) -> Result<(), ServerFnError> {
+    let mut conn = db().await?;
+    let rows = sqlx::query!("INSERT INTO comments (author, content, timestamp, rating, listing_id) VALUES ($1, $2, $3, $4, $5)",
+        author, content, chrono::Utc::now().timestamp_millis(), rating, listing_id)
+        .execute(&mut conn).await?;
+    Ok(())
+}
+
 // Renders a navbar structure
 #[component]
 pub fn Comment(
