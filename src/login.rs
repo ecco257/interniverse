@@ -91,7 +91,7 @@ pub fn Login() -> impl IntoView {
     let (password, set_password) = create_signal("".to_string());
 
     view! {
-        <Popup open=open>
+        <Popup width=MaybeSignal::Static(20) open=open>
             <div class="login-container">
                 <h1>Login</h1>
                 <label for="login-username-input"><b>Username</b></label>
