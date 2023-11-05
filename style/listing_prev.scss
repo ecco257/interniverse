@@ -1,0 +1,56 @@
+.listing-prev {
+  background: #f9f9f9; // Light grey background
+  border-radius: 8px; // Rounded corners
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Subtle shadow
+  padding: 1rem; // Spacing inside the block
+  margin: 0.5rem auto; // Center the blocks with equal margin on top and bottom
+  max-width: 40%; // Max width, can be adjusted
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+	cursor: pointer; // Change the cursor to a pointer on hover
+	justify-content: space-between;
+
+	.left-items {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	.right-items {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.left-items {
+		.listing-company {
+			font-weight: bold;
+			font-size: 1.8rem;
+			color: #333; 
+		}
+
+		.listing-position {
+			font-size: 1.5rem;
+			color: #555; 
+		}
+
+		.listing-comments {
+			font-size: 0.85rem;
+			color: #777; 
+		}
+	}
+
+	.right-items {
+		.listing-rating {
+			font-size: 1rem;
+			color: #555;
+		}
+	}
+}
+
+// You can add a hover effect to improve interactivity
+.listing-prev:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px); // Optional: slight lift effect on hover
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
