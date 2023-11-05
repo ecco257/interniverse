@@ -68,7 +68,7 @@
 .listing-position {
     font-size: 24px;
     font-weight: bold;
-    margin: 10px;
+    margin: 15px;
     color: #333; 
 }
 
@@ -97,6 +97,8 @@
 
 .listing .comment-form .stars {
     display: flex;
+    justify-content:center;
+    width:100%;
     color: #f2c418;
     margin-right: 5px;
     cursor: pointer;
@@ -126,4 +128,8 @@
     border-radius: 5px;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.comment-shell {
+    margin: 15px;
 }

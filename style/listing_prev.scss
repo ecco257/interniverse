@@ -4,7 +4,8 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Subtle shadow
   padding: 1rem; // Spacing inside the block
   margin: 0.5rem auto; // Center the blocks with equal margin on top and bottom
-  max-width: 40%; // Max width, can be adjusted
+  max-width: 50%; // Max width, can be adjusted
+  min-width: 350px;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -49,9 +50,8 @@
 	}
 }
 
-// You can add a hover effect to improve interactivity
 .listing-prev:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px); // Optional: slight lift effect on hover
+  transform: translateY(-2px); 
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }

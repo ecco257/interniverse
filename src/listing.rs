@@ -1,5 +1,6 @@
 use cfg_if::cfg_if;
 use crate::comment::{Comment, get_comments, self};
+use crate::popup::Popup;
 use serde::{Deserialize, Serialize};
 use crate::login::*;
 use chrono::prelude::*;
@@ -95,7 +96,7 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
     let (comments, set_comments) = create_signal(vec![
         Comment::new(
             String::from("Bob"),
-            String::from("Hi. My name is bob. How is your day?"),
+            String::from("Hi. My name is bob. I don't know how to tell you this, but I am the author of the bible. Yep. I am jessus the lord and savior. Just kidding, I'm no god, but Jesus christ is my ni-"),
             Utc::now().timestamp_millis(),
             0.65,
             1,
@@ -119,7 +120,7 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
     let (avg_rating, set_avg_rating) = create_signal(get_avg_rating(&comments.get()));
     // Writing Comments Signals
     let (input_content, set_input_content) =
-        create_signal(String::from("Write your comment here."));
+        create_signal(String::from(""));
     let input_element: NodeRef<Input> = create_node_ref();
     let (star_input, set_star_input) = create_signal(4);
 
@@ -390,7 +391,9 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
                 key = |c| c.get_listing_id()
                 children=move |c: Comment| {
                     view! {
-                        <Comment comment_data=c />
+                        <div class="comment-shell">
+                            <Comment comment_data=c />
+                        </div>
                     }
                 }
                 />
@@ -399,6 +402,7 @@ pub fn Listing(listing_data: ReadSignal<Listing>) -> impl IntoView {
             <form class="comment-form" on:submit=on_submit>
                 <input class="comment-box" type="text"
                 value = input_content
+                placeholder = "Write your comment here."
                 node_ref=input_element
                 />
                 <div class="star-rating">
@@ -425,10 +429,11 @@ pub fn ListingPage() -> impl IntoView {
         0,
         String::from("RPI"),
     ));
+    let open = create_rw_signal(true);
 
     view! {
-        <Listing
-        listing_data=listing_test
-        />
+            <Listing
+            listing_data=listing_test
+            />
     }
 }

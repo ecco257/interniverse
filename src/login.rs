@@ -17,7 +17,7 @@ cfg_if! {
 
 		use rand::rngs::OsRng;
 
-		async fn create_session(id: i32) -> Result<(String, i64), ServerFnError> {
+		pub async fn create_session(id: i32) -> Result<(String, i64), ServerFnError> {
 			let mut u128_pool = [0u8; 16];
 			u128_pool = rand::random::<[u8; 16]>();
 
@@ -32,7 +32,7 @@ cfg_if! {
 			Ok((session_token.to_string(), expiry_date))
 		}
 
-		async fn validate_session(id: i32, session_token: String) -> Result<bool, ServerFnError> {
+		pub async fn validate_session(id: i32, session_token: String) -> Result<bool, ServerFnError> {
 			let mut conn = db().await?;
 			let rows = sqlx::query!("SELECT * FROM sessions WHERE user_id = $1 AND session_token = $2",
 				id, session_token)
